@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Message Labeler</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='hero.css')}}">
+    <link rel="stylesheet" href="https://unpkg.com/bulma-modal-fx/dist/css/modal-fx.min.css" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!--Reference: https://stackoverflow.com/questions/1321878/how-to-prevent-favicon-ico-requests-->
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    <style>
+    .columns:nth-child(2)
+    {margin-top: -10rem;}
+    </style>
+  </head>
+  <body>
+    <section class="hero is-info is-small">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <p class="title">Labeling Messages for Disaster Response</p>
+          <p class="subtitle">A Udacity Project</p>
+        </div>
+      </div>
+    </section>
+    <div class="box cta">
+      <form id="inputForm" role="form" method="POST" action="/">
+        <div class="field is-grouped" style="margin-bottom: 20px">
+            <p class="control is-expanded">
+                <input class="input" type="text" name="message" placeholder="Enter a Message to Label" autofocus required>
+            </p>
+            <p class="control">
+              <input type="submit" class="button is-info" id="execute">
+            </p>
+        </div>
+      </form>
+      <div class="tags tile">
+        {% for category in dataset %}
+        <span class="tag" id="{{category|replace(' ', '')}}">{{category}}</span>
+        {% endfor %}
+      </div>  
+    </div>
+    <section class="container has-text-centered" style="margin-top: 80px">
+        <p class="title">Our Training Set</p>
+    </section>
+    <section class="container">
+      <div class="columns features">
+        <div class="column is-4">
+          <div class="card is-shady">
+            <div class="card-image is-12" id="{{ids[0]}}">
+            </div>
+            <div class="card-content">
+              <div class="content">
+                <h4>Message Labels</h4>
+                <p>The messages in the training set share 35 different labels related to disaster response. "Child alone" was excluded from our analysis because no message in the training set has this label.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column is-4">
+            <div class="card is-shady">
+                <div class="card-image is-4" id="{{ids[1]}}">
+                </div>
+                <div class="card-content  modal-button" data-target="modal-card2">
+                    <div class="content">
+                      <h4>Message Genres</h4>
+                      <p>Half of the messages are from news reports. Around forty percent of the messages are direct messages. Only around ten percent are social media messages.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-4 modal-button">
+          <div class="card is-shady">
+            <div class="card-image is-4" id="{{ids[2]}}">
+            </div>
+            <div class="card-content">
+              <div class="content">
+                <h4>Word Cloud</h4>
+                <p>As you can see, words like “people”, "government", "help", "water" and "need" stand out since they are used more frequently in the messages in our training set.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer class="footer">
+        <div class="container">
+            <div class="content has-text-centered">
+                <div class="soc columns">
+                    <a class="column is-4" href="https://github.com/TianruiZhang"><i class="fab fa-github fa-4x"></i></a>
+                    <a class="column is-4" href="https://www.facebook.com/Jameschang1992"><i class="fab fa-facebook fa-4x"></i></a>
+                    <a class="column is-4" href="https://www.linkedin.com/in/tianruizhang"><i class="fab fa-linkedin fa-4x"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+  </body>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
+  <script type="text/javascript">
+    const plots = {{plotsJSON | safe}};
+    const ids = {{ids | safe}};
+    for (let i in plots) {
+      Plotly.plot(
+        ids[i],
+        plots[i].data,
+        plots[i].layout || {}
+      );
+    }
+  </script>
+  <script type="text/javascript">
+    let message = {{message | tojson}};
+    let prediction = {{prediction}};
+  </script>
+  <script type="text/javascript" src="{{url_for('static', filename='app.js')}}"></script>
+</html>
