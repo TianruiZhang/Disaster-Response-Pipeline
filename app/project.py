@@ -102,13 +102,16 @@ app = Flask(__name__)
 def index():
     if request.method == "POST":
         try:
-            message = request.form["message"]
+            message = "Message: " + request.form["message"]
             # Run prediction here
             print(message)
             prediction = json.dumps(np.random.randint(low=0, high=2, size=35).tolist())
         except:
             print("Unable to get the message.")
-    return render_template("index.html", dataset=categories, ids=ids, plotsJSON=plotsJSON, prediction=prediction, message=message)
+    else:
+        message = "No message has been received yet."
+        prediction = json.dumps(np.zeros(35).tolist())
+    return render_template("index.html", dataset=categories, ids=ids, plotsJSON=plotsJSON, message=message, prediction=prediction)
 
 if __name__ == "__main__":
     app.debug = True
