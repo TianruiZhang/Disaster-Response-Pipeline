@@ -6,6 +6,11 @@ import plotly.plotly as py
 import plotly
 import json
 import numpy as np
+import re
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
+import pickle
 
 # Load data
 engine = create_engine("sqlite:///../data/messages.db")
@@ -96,6 +101,13 @@ ids = ["plot{}".format(i) for i, _ in enumerate(plots)]
 # Convert the Plotly plots to JSON
 plotsJSON = json.dumps(plots, cls=plotly.utils.PlotlyJSONEncoder)
 
+# Load pre-trained model
+def tokenize(text):
+    text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
+    tokens = word_tokenize(text)
+    tokens = [WordNetLemmatizer().lemmatize(token) for token in tokens if token not in stopwords.words("english")]
+    return tokens
+
 app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
@@ -104,8 +116,9 @@ def index():
         try:
             message = "Message: " + request.form["message"]
             # Run prediction here
-            print(message)
-            prediction = json.dumps(np.random.randint(low=0, high=2, size=35).tolist())
+            prediction = pipeline.predict(np.array([request.form["message"]]))
+            prediction = json.dumps(prediction[0].tolist())
+            print(prediction)
         except:
             print("Unable to get the message.")
     else:
@@ -115,4 +128,6 @@ def index():
 
 if __name__ == "__main__":
     app.debug = True
+    pipeline = pickle.load(open("../models/LinearSVCClassifierChain.pkl", "rb"))
     app.run(host="0.0.0.0", port=8000)
+    print("Finished Loading!")
