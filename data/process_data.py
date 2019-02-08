@@ -11,13 +11,28 @@ from PIL import Image
 
 def loadDataset(messages_path="messages.csv",
                 categories_path="categories.csv"):
-                    messages = pd.read_csv(messages_path)
-                    categories = pd.read_csv(categories_path)
-                    df = pd.merge(messages, categories, how="inner", on="id")
-                    return df
+                """
+                Load dataset stored as csv files.
+                Args:
+                    messages_path (str): path to message file.
+                    categories_path (str) : path to categories file.
+                Returns:
+                    A Pandas dataframe.
+                """
+                messages = pd.read_csv(messages_path)
+                categories = pd.read_csv(categories_path)
+                df = pd.merge(messages, categories, how="inner", on="id")
+                return df
 
 
 def cleanDatasets(df):
+    """
+    Clean dataset.
+    Args:
+        df (dataframe): a Pandas dataframe to be cleaned.
+    Returns:
+        A cleaned Pandas dataframe.
+    """
     categories = df["categories"].str.split(pat=";", expand=True)
     # Select the first row of the categories dataframe
     row = categories.iloc[0, :]
@@ -57,20 +72,34 @@ def cleanDatasets(df):
 
 
 def save2DB(df):
+    """
+    Save to cleaned dataframe to sqlite database.
+    Args:
+        df (dataframe): the cleaned Pandas dataframe.
+    Returns:
+        Not applicable.
+    """
     engine = create_engine("sqlite:///messages.db")
     df.to_sql("messages", engine, index=False, if_exists="replace")
 
 
 def generateWordCloud(df):
+    """
+    Generate a word cloud image of a given training set.
+    Args:
+        df (dataframe): the cleaned Pandas dataframe.
+    Returns>
+        Not applicable.
+    """
     words = " ".join(message for message in df.Message)
     words = re.sub(r"[^a-zA-Z]", " ", words)
     words = words.split()
     words = [word for word in words if word not in stopwords.words("english")]
-    stopwords = set(STOPWORDS)
-    words = [word for word in words if word not in stopwords]
+    stopwords_set = set(STOPWORDS)
+    words = [word for word in words if word not in stopwords_set]
     words = " ".join(words)
     wordcloud = WordCloud(
-        stopwords=stopwords,
+        stopwords=stopwords_set,
         background_color="white").generate(words)
     wordcloud.to_file("wordcloud.png")
 

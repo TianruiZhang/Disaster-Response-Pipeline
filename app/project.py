@@ -116,6 +116,13 @@ app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    """
+    Display the UI of the web application.
+    Args:
+        Not applicable.
+    Returns:
+        Renders a template with plots and an input field.
+    """
     if request.method == "POST":
         try:
             message = "Message: " + request.form["message"]
@@ -137,8 +144,6 @@ def index():
         )
 
 if __name__ == "__main__":
-    app.debug = True
     pipeline = pickle.load(
         open("../models/LinearSVCClassifierChain.pkl", "rb"))
     app.run(host="0.0.0.0", port=8000)
-    print("Finished Loading!")
