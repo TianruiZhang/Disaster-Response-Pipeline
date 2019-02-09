@@ -1,6 +1,17 @@
 # Disaster Response Pipeline
 ## Description
 This is a web application that integrates a machine learning pipeline, which labels messages sent during disasters, with data visualization which desribes the training set.
+## Prerequisites
+To view this project, you are recommended to have the latest version of the followings:
+1. [Python 3](https://www.python.org/downloads/)
+2. [NumPy](https://www.numpy.org)
+3. [pandas](https://pandas.pydata.org)
+4. [SQLAlchemy](https://www.sqlalchemy.org)
+5. [scikit-learn](https://scikit-learn.org/stable/documentation.html)
+6. [NLTK](https://www.nltk.org)
+7. [Flask](http://flask.pocoo.org)
+8. [Plotly](https://plot.ly/python/)
+9. [wordcloud](https://pypi.org/project/wordcloud/)
 ## Configuration
 1. Open `terminal` and type `git clone https://github.com/TianruiZhang/Disaster-Response-Pipeline.git`.
 2. Switch to the parent repository directory in your `terminal`.
