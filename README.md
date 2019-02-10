@@ -12,11 +12,26 @@ To view this project, you are recommended to have the latest version of the foll
 7. [Flask](http://flask.pocoo.org)
 8. [Plotly](https://plot.ly/python/)
 9. [wordcloud](https://pypi.org/project/wordcloud/)
-## Configuration
-1. Open `terminal` and type `git clone https://github.com/TianruiZhang/Disaster-Response-Pipeline.git`.
-2. Switch to the parent repository directory in your `terminal`.
-3. Extract `models.tar.xz` in this repository. This will create a folder named `models`, which is a sibling folder to `app` and `data` folders.
-4. In the `terminal`, type `cd app` and `python3 project.py`.
+## Configuration (for Udacity Project Reviewers)
+Open `terminal` and do the followings:
+1. `git clone https://github.com/TianruiZhang/Disaster-Response-Pipeline.git`.
+2. Switch to the parent repository directory.
+3. Run `python3 extractXZ.py`. This will create a folder named `models`, which is a sibling folder to `app` and `data` folders.
+4. Run `cd data` to switch to the directory that holds all ETL scripts and data.
+5. Run `python3 process_data.py --messagePath messages.csv --categoriesPath categories.csv --dbPath messages.db --wordcloudPath wordcloud.png` to store the clean data into a SQLite database and generate the wordcloud image.
+6. Run `cd ..` to return to the parent repository directory.
+7. Run `cd models` to switch to the directory that holds all ML scripts and data.
+8. Run `python3 train_classifier.py --dbPath messages.db --modelPath LinearSVCClassifierChain.pkl`. This stores the trained model into a pickle file.
+9. Run `cd ..` to return to the parent repository directory.
+10. Run `cd app` and `python3 project.py`.
+11. Wait until you see the line `* Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)` in the terminal. Leave the `terminal` open.
+12. In your browser, type `http://0.0.0.0:8000/` in the address bar.
+## Configuration (for End Users)
+Open `terminal` and do the followings:
+1. `git clone https://github.com/TianruiZhang/Disaster-Response-Pipeline.git`.
+2. Switch to the parent repository directory.
+3. Run `python3 extractXZ.py`. This will create a folder named `models`, which is a sibling folder to `app` and `data` folders.
+4. Run `cd app` and `python3 project.py`.
 5. Wait until you see the line `* Running on http://0.0.0.0:8000/ (Press CTRL+C to quit)` in the terminal. Leave the `terminal` open.
 6. In your browser, type `http://0.0.0.0:8000/` in the address bar.
 ## How to Use this App

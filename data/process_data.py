@@ -1,28 +1,62 @@
 #!/usr/bin/env python3
 
+import argparse
 import pandas as pd
 import numpy as np
 from sqlalchemy import create_engine
 import re
 from nltk.corpus import stopwords
-from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+from wordcloud import WordCloud, STOPWORDS
 from PIL import Image
 
 
-def loadDataset(messages_path="messages.csv",
-                categories_path="categories.csv"):
-                """
-                Load dataset stored as csv files.
-                Args:
-                    messages_path (str): path to message file.
-                    categories_path (str) : path to categories file.
-                Returns:
-                    A Pandas dataframe.
-                """
-                messages = pd.read_csv(messages_path)
-                categories = pd.read_csv(categories_path)
-                df = pd.merge(messages, categories, how="inner", on="id")
-                return df
+def getInputArgs():
+    """
+    Retrieve and parse the command line arguments
+    Args:
+        Not applicable.
+    Returns:
+        Data structure that stores command line arguments object.
+    """
+    parser = argparse.ArgumentParser(
+        description="Run this file to clean data and generate wordcloud"
+        )
+    parser.add_argument(
+        "--messagePath",
+        help="Path to message file",
+        type=str
+        )
+    parser.add_argument(
+        "--categoriesPath",
+        help="Path to categories file",
+        type=str
+        )
+    parser.add_argument(
+        "--dbPath",
+        help="Path to output SQLite database",
+        type=str
+        )
+    parser.add_argument(
+        "--wordcloudPath",
+        help="Path to output wordcloud image",
+        type=str
+        )
+    return parser.parse_args()
+
+
+def loadDataset(messagePath, categoriesPath):
+    """
+    Load dataset stored as csv files.
+    Args:
+        messagePath (str): path to message file.
+        categoriesPath (str) : path to categories file.
+    Returns:
+        A Pandas dataframe.
+    """
+    messages = pd.read_csv(messagePath)
+    categories = pd.read_csv(categoriesPath)
+    df = pd.merge(messages, categories, how="inner", on="id")
+    return df
 
 
 def cleanDatasets(df):
@@ -71,23 +105,25 @@ def cleanDatasets(df):
     return df
 
 
-def save2DB(df):
+def save2DB(df, dbPath):
     """
     Save to cleaned dataframe to sqlite database.
     Args:
         df (dataframe): the cleaned Pandas dataframe.
+        dbPath (str): path to output SQLite database.
     Returns:
         Not applicable.
     """
-    engine = create_engine("sqlite:///messages.db")
+    engine = create_engine("sqlite:///" + dbPath)
     df.to_sql("messages", engine, index=False, if_exists="replace")
 
 
-def generateWordCloud(df):
+def generateWordCloud(df, wordcloudPath):
     """
     Generate a word cloud image of a given training set.
     Args:
         df (dataframe): the cleaned Pandas dataframe.
+        wordcloudPath (str): path to output wordcloud image.
     Returns>
         Not applicable.
     """
@@ -101,10 +137,12 @@ def generateWordCloud(df):
     wordcloud = WordCloud(
         stopwords=stopwords_set,
         background_color="white").generate(words)
-    wordcloud.to_file("wordcloud.png")
+    wordcloud.to_file(wordcloudPath)
 
 if __name__ == "__main__":
-    df = loadDataset()
+    args = getInputArgs()
+    df = loadDataset(args.messagePath, args.categoriesPath)
     df = cleanDatasets(df)
-    save2DB(df)
-    generateWordCloud(df)
+    save2DB(df, args.dbPath)
+    generateWordCloud(df, args.wordcloudPath)
+    print("All done!")
