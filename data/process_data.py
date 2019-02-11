@@ -115,7 +115,7 @@ def save2DB(df, dbPath):
         Not applicable.
     """
     engine = create_engine("sqlite:///" + dbPath)
-    df.to_sql("messages", engine, index=False, if_exists="replace")
+    df.to_sql("messages", engine, index=False, if_exists="replace", chunksize=500)
 
 
 def generateWordCloud(df, wordcloudPath):
